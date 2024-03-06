@@ -1,35 +1,35 @@
 package io.concurrency.chapter07.exam03;
 
 public class VolatileExample {
-    // volatile 키워드 추가
-//   volatile boolean running = true;
-   boolean running = true;
+	// volatile 키워드 추가
+	//   volatile boolean running = true;
+	boolean running = true;
 
-    public void volatileTest() {
-        new Thread(() -> {
-            int count = 0;
-            while (running) {
+	public void volatileTest() {
+		new Thread(() -> {
+			int count = 0;
+			while (running) { // volatile 키워드 없을 경우 캐시에서 불러옴 (이 때문에 무한 루프)
                 /*try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }*/
-                count++;
-            }
-            System.out.println("Thread 1 종료. Count: " + count);
-        }).start();
+				count++;
+			}
+			System.out.println("Thread 1 종료. Count: " + count);
+		}).start();
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ignored) {
-            }
-            System.out.println("Thread 2 종료 중..");
-            running = false;
-        }).start();
-    }
+		new Thread(() -> {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ignored) {
+			}
+			System.out.println("Thread 2 종료 중..");
+			running = false;
+		}).start();
+	}
 
-    public static void main(String[] args) {
-        new VolatileExample().volatileTest();
-    }
+	public static void main(String[] args) {
+		new VolatileExample().volatileTest();
+	}
 }
