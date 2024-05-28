@@ -10,8 +10,10 @@ public class ReadWriteLockExample {
 
         Thread reader1 = new Thread(() -> {
             readWriteLock.readLock().lock();
+
             try {
-                System.out.println("읽기 스레드 1이 데이터를 읽고 있습니다. 데이터: " + sharedData.getData());
+                System.out.println(String.format("%s: 읽기 쓰레드 1이 데이터를 읽고 있습니다. 데이터: %s", System.currentTimeMillis(),
+                    sharedData.getData()));
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -24,8 +26,10 @@ public class ReadWriteLockExample {
 
         Thread reader2 = new Thread(() -> {
             readWriteLock.readLock().lock();
+
             try {
-                System.out.println("읽기 스레드 2가 데이터를 읽고 있습니다. 데이터: " + sharedData.getData());
+                System.out.println(String.format("%s: 읽기 쓰레드 2가 데이터를 읽고 있습니다. 데이터: %s", System.currentTimeMillis(),
+                    sharedData.getData()));
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -38,15 +42,17 @@ public class ReadWriteLockExample {
 
         Thread writer = new Thread(() -> {
             readWriteLock.writeLock().lock();
+
             try {
-                System.out.println("쓰기 스레드가 데이터를 쓰고 있습니다");
+                System.out.println(String.format("%s: 쓰기 쓰레드가 데이터를 쓰고 있습니다", System.currentTimeMillis()));
                 sharedData.setData(40);
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("쓰기 스레드가 데이터를 변경 했습니다. 데이터: " + sharedData.getData());
+                System.out.println(String.format("%s: 쓰기 쓰레드가 데이터를 변경 했습니다. 데이터: %s", System.currentTimeMillis(),
+                    sharedData.getData()));
             } finally {
                 readWriteLock.writeLock().unlock();
             }
@@ -56,7 +62,9 @@ public class ReadWriteLockExample {
         reader1.start();
         reader2.start();
     }
-    static class SharedData{
+
+    static class SharedData {
+
         private int data = 0;
 
         public int getData() {

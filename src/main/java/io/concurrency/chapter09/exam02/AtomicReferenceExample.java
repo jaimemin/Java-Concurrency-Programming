@@ -5,19 +5,17 @@ import java.util.concurrent.atomic.AtomicReference;
 public class AtomicReferenceExample {
 
     public static void main(String[] args) {
-
         User user1 = new User("Alice", 25);
         User user2 = new User("Bob", 30);
-
         AtomicReference<User> atomicReference = new AtomicReference<>(user2);
 
         Thread thread1 = new Thread(() -> {
             User updateUser = new User("Carol", 40);
             boolean success = atomicReference.compareAndSet(user1, updateUser);
             if (success) {
-                System.out.println("스레드 1 이 " + updateUser + " 로 변경에 성공했습니다.");
+                System.out.println("쓰레드 1 이 " + updateUser + " 로 변경에 성공했습니다.");
             } else {
-                System.out.println("스레드 1 이 " + updateUser + " 로 변경에 실패했습니다.");
+                System.out.println("쓰레드 1 이 " + updateUser + " 로 변경에 실패했습니다.");
             }
         });
 
@@ -25,9 +23,9 @@ public class AtomicReferenceExample {
             User updateUser = new User("David", 50);
             boolean success = atomicReference.compareAndSet(user2, updateUser);
             if (success) {
-                System.out.println("스레드 2 가 " + updateUser + " 로 변경에 성공했습니다.");
+                System.out.println("쓰레드 2 가 " + updateUser + " 로 변경에 성공했습니다.");
             } else {
-                System.out.println("스레드 2 가 " + updateUser + " 로 변경에 실패했습니다.");
+                System.out.println("쓰레드 2 가 " + updateUser + " 로 변경에 실패했습니다.");
             }
         });
 
@@ -46,8 +44,10 @@ public class AtomicReferenceExample {
     }
 }
 
-class User{
+class User {
+
     private String name;
+
     private int age;
 
     public User(String name, int age) {
@@ -66,8 +66,8 @@ class User{
     @Override
     public String toString() {
         return "User{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
+            "name='" + name + '\'' +
+            ", age=" + age +
+            '}';
     }
 }

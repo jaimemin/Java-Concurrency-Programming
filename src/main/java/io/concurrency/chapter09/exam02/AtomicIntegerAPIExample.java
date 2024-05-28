@@ -5,28 +5,27 @@ import java.util.function.IntUnaryOperator;
 
 public class AtomicIntegerAPIExample {
 
-    public static void main(String[] args) throws InterruptedException {
-        AtomicInteger atomicInt = new AtomicInteger(10);
-        int currentValue = atomicInt.get();
-        System.out.println("Current value: " + currentValue); // 10
+	public static void main(String[] args) throws InterruptedException {
+		AtomicInteger atomicInteger = new AtomicInteger(10);
+		int currentValue = atomicInteger.get();
+		System.out.println(String.format("현재 값: %d", currentValue));
 
-        atomicInt.set(20);
-        System.out.println("New value: " + atomicInt.get()); // 20
+		atomicInteger.set(20);
+		System.out.println(String.format("변경된 값: %d", atomicInteger.get()));
 
-        int previousValue = atomicInt.getAndSet(30);
-        System.out.println("Previous value: " + previousValue); // 20 System.out.println("New value: " + atomicInt.get()); // 30
+		int previousValue = atomicInteger.getAndSet(30);
+		System.out.println(String.format("변경 전 값: %d", previousValue));
 
-        int newValue = atomicInt.incrementAndGet();
-        System.out.println("New value after increment: " + newValue); // 31
+		int newValue = atomicInteger.incrementAndGet();
+		System.out.println(String.format("변경 후 값: %d", newValue));
 
-        boolean updated = atomicInt.compareAndSet(31, 40);
-        System.out.println("Update successful? " + updated);  // true
-        System.out.println("New value: " + atomicInt.get()); // 40
+		boolean updated = atomicInteger.compareAndSet(31, 40);
+		System.out.println(String.format("성공적으로 값을 변경? %s", updated));  // true
+		System.out.println(String.format("변경 후 값: %d", atomicInteger.get()));
 
-        IntUnaryOperator addFive = value -> value + 5;
-        int previousValue2 = atomicInt.getAndUpdate(addFive);
-        System.out.println("Previous value: " + previousValue2); // 40 System.out.println("Updated value: " + atomicInt.get());  // 45
-        System.out.println("Next value: " + atomicInt.get()); // 40 System.out.println("Updated value: " + atomicInt.get());  // 45
-
-    }
+		IntUnaryOperator addFive = value -> value + 5;
+		int previousValue2 = atomicInteger.getAndUpdate(addFive);
+		System.out.println(String.format("변경 전 값: %d", previousValue2));
+		System.out.println(String.format("변경 후 값: %d", atomicInteger.get()));
+	}
 }

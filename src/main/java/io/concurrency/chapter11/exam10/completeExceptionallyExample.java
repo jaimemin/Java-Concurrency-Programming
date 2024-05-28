@@ -1,36 +1,31 @@
 package io.concurrency.chapter11.exam10;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class completeExceptionallyExample {
     public static void main(String[] args) {
+        CompletableFuture<String> cf = new CompletableFuture<>();
 
-        CompletableFuture<String> cf1 = new CompletableFuture<>();
-        getData(cf1);
-        CompletableFuture<String> cf2 = cf1
-                .thenApply(result -> {
-                    System.out.println(result);
-                    return result.toUpperCase();
-                })
-                .handle((r, e) -> {
-                    if (e != null) {
-                        System.err.println("Exception: " + e.getMessage());
-                        return "noname";
-                    }
-                    return r;
-                });
+        new Thread(() -> {
+            try {
+                // 2초 동안 작업 수행 (예: 비동기 작업)
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        System.out.println("result: " + cf2.join());
-    }
+            cf.completeExceptionally(new RuntimeException("비동기 작업 중 오류 발생"));
+        }).start();
 
-    private static void getData(CompletableFuture cf) {
         try {
-            System.out.println("비동기 작업 수행 중..");
-            Thread.sleep(500);
-//            throw new IllegalArgumentException("error");
-        } catch (Exception e) {
-            cf.completeExceptionally(e);
+            String result = cf.get();
+
+            System.out.println("비동기 작업 결과: " + result);
+        } catch (ExecutionException e) {
+            System.out.println("예외 발생: " + e.getCause().getMessage());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        cf.complete("Hello World");
     }
 }

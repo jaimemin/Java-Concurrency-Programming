@@ -2,37 +2,48 @@ package io.concurrency.chapter11.exam10;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 public class isCompletedExceptionallyAndIsCancelledExample {
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException, TimeoutException {
+	public static void main(String[] args) {
+		CompletableFuture<String> cf = new CompletableFuture<>();
 
-        CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> 10);
-        CompletableFuture<Integer> cf2 = CompletableFuture.supplyAsync(() -> {
-//            return 20;
-            throw new RuntimeException("error");
-        });
+		new Thread(() -> {
+			try {
+				Thread.sleep(2000);
 
-//        cf2.cancel(true);
+				cf.completeExceptionally(new RuntimeException("비동기 작업 중 오류 발생"));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}).start();
 
-        CompletableFuture<Integer> combinedFuture =
-                cf1.thenCombine(cf2.exceptionally(e -> 15), (result1, result2) -> {
+		new Thread(() -> {
+			while (!cf.isDone()) {
+				System.out.println("작업 진행 중...");
 
-                    if (cf2.isCancelled()) {
-                        return 0; // 취소 완료
-                    }
-                    else if (cf2.isCompletedExceptionally()) {
-                        return result2; // 예외 완료
-                    }
-                    else if(cf2.isDone()) {
-                        return result1 + result2; // 정상 완료
-                    }
-                    else return -1;
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 
-             });
+			if (cf.isCompletedExceptionally()) {
+				System.out.println("작업이 예외처리 되었습니다.");
+			} else {
+				System.out.println("작업이 정상적으로 완료되었습니다.");
+			}
+		}).start();
 
-        int result = combinedFuture.join(); // 결과 가져오기
-        System.out.println("최종 결과: " + result);
-    }
+		try {
+			String result = cf.get();
+
+			System.out.println("비동기 작업 결과: " + result);
+		} catch (ExecutionException e) {
+			System.out.println("예외 발생: " + e.getCause().getMessage());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }
